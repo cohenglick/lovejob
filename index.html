@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Job – ההתאמה המושלמת בעבודה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#241220;
+    --bloom:#FF5D73;
+    --bloom-dark:#E8435B;
+    --blush:#FFF1EC;
+    --blush-2:#FFE3DA;
+    --fig:#5C2A4D;
+    --fig-light:#7C3F68;
+    --honey:#FFC857;
+    --white:#FFFFFF;
+    --text-soft:#6B5566;
+    --line:rgba(36,18,32,0.10);
+    --success:#3FA66B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Rubik', sans-serif;
+    background:var(--blush);
+    color:var(--ink);
+    line-height:1.6;
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{font-family:'Suez One', serif; font-weight:400;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  input, textarea, select{font-family:inherit;}
+  a{color:inherit;}
+  :focus-visible{outline:3px solid var(--honey); outline-offset:2px;}
+  .hidden{display:none !important;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+
+  /* ===== App header (shown once role chosen) ===== */
+  .app-header{
+    background:var(--white);
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:40;
+  }
+  .app-header .wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-top:16px; padding-bottom:16px;
+  }
+  .app-logo{display:flex; align-items:center; gap:10px; font-family:'Suez One',serif; font-size:22px; color:var(--fig);}
+  .app-logo .heart{color:var(--bloom); font-size:22px;}
+  .role-pill{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--blush); border:1px solid var(--blush-2);
+    padding:7px 16px; border-radius:999px; font-size:13.5px; font-weight:600; color:var(--fig);
+  }
+  .switch-role{
+    background:transparent; color:var(--text-soft); font-size:13.5px; font-weight:500;
+    text-decoration:underline; padding:6px 4px;
+  }
+  .switch-role:hover{color:var(--bloom-dark);}
+
+  /* ===== Landing ===== */
+  .landing{
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+    padding:60px 24px;
+    background:
+      radial-gradient(600px 500px at 12% 8%, rgba(255,93,115,0.16), transparent 60%),
+      radial-gradient(560px 480px at 90% 90%, rgba(92,42,77,0.14), transparent 60%),
+      var(--blush);
+  }
+  .landing-inner{max-width:760px; text-align:center; position:relative; z-index:2;}
+  .landing-logo{
+    font-family:'Suez One',serif; font-size:38px; color:var(--fig); margin-bottom:10px;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .landing-logo .heart{color:var(--bloom);}
+  .landing h1{
+    font-size:44px; line-height:1.28; color:var(--ink); margin:18px 0 14px;
+  }
+  .landing h1 em{font-style:normal; color:var(--bloom-dark);}
+  .landing p.lead{font-size:17px; color:var(--text-soft); max-width:480px; margin:0 auto 40px;}
+
+  /* Signature: overlapping match cards */
+  .match-stage{
+    position:relative; width:280px; height:200px; margin:0 auto 44px;
+  }
+  .stage-card{
+    position:absolute; top:0; width:200px; height:200px; border-radius:22px;
+    box-shadow:0 18px 40px rgba(36,18,32,0.16);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; padding:18px;
+    font-weight:600; font-size:14px; text-align:center;
+  }
+  .stage-card.job{
+    right:0; background:linear-gradient(150deg, var(--fig) 0%, #401f37 100%); color:var(--blush);
+    transform:rotate(-9deg);
+  }
+  .stage-card.candidate{
+    left:0; background:var(--white); border:1px solid var(--blush-2); color:var(--fig);
+    transform:rotate(9deg);
+  }
+  .stage-card .icon{font-size:30px;}
+  .match-heart{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:56px; height:56px; border-radius:50%;
+    background:var(--bloom); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    box-shadow:0 10px 24px rgba(255,93,115,0.45);
+    z-index:3;
+  }
+
+  .role-choice{
+    display:flex; gap:18px; justify-content:center; flex-wrap:wrap;
+  }
+  .role-card{
+    width:270px; background:var(--white); border:1px solid var(--blush-2);
+    border-radius:20px; padding:30px 24px; text-align:center;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .role-card:hover{transform:translateY(-6px); box-shadow:0 20px 36px rgba(36,18,32,0.14);}
+  .role-card .emoji{font-size:34px; margin-bottom:12px; display:block;}
+  .role-card h3{font-size:19px; color:var(--ink); margin-bottom:8px;}
+  .role-card p{font-size:13.5px; color:var(--text-soft); margin-bottom:20px;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-weight:700; font-size:14.5px; padding:13px 24px; border-radius:12px;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-bloom{background:var(--bloom); color:var(--white);}
+  .btn-bloom:hover{background:var(--bloom-dark); box-shadow:0 10px 22px rgba(255,93,115,0.35);}
+  .btn-fig{background:var(--fig); color:var(--white);}
+  .btn-fig:hover{background:var(--fig-light); box-shadow:0 10px 22px rgba(92,42,77,0.3);}
+  .btn-outline{background:transparent; border:1.5px solid var(--fig); color:var(--fig);}
+  .btn-outline:hover{background:var(--fig); color:var(--white);}
+  .btn-block{width:100%;}
+  .btn-sm{padding:9px 16px; font-size:13px; border-radius:9px;}
+  .btn:disabled{opacity:0.5; cursor:not-allowed; transform:none !important;}
+
+  /* ===== Main views ===== */
+  .view{padding:40px 0 80px;}
+  .view-head{margin-bottom:32px;}
+  .view-head .eyebrow{
+    color:var(--bloom-dark); font-weight:700; font-size:12.5px; letter-spacing:1.2px; text-transform:uppercase;
+    display:block; margin-bottom:8px;
+  }
+  .view-head h2{font-size:28px; color:var(--ink);}
+  .view-head p{color:var(--text-soft); margin-top:8px; font-size:15px;}
+
+  .panel{
+    background:var(--white); border:1px solid var(--line); border-radius:18px;
+    padding:28px; margin-bottom:32px;
+  }
+  .panel h3{font-size:18px; color:var(--ink); margin-bottom:18px;}
+
+  .field-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .field{margin-bottom:16px;}
+  .field.full{grid-column:1 / -1;}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--fig); margin-bottom:6px;}
+  .field .hint{font-size:11.5px; color:var(--text-soft); font-weight:400; margin-right:6px;}
+  .field input, .field textarea, .field select{
+    width:100%; padding:12px 14px; border-radius:10px; font-size:14.5px;
+    border:1.5px solid var(--line); background:var(--blush); color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{
+    border-color:var(--bloom); outline:none; background:var(--white);
+  }
+  .field textarea{resize:vertical; min-height:90px;}
+  .field input[type="file"]{
+    padding:10px 12px; background:var(--blush); cursor:pointer;
+  }
+  .field input[type="file"]::file-selector-button{
+    font-family:'Rubik', sans-serif; font-weight:600; font-size:13px;
+    background:var(--fig); color:var(--white); border:none; border-radius:8px;
+    padding:8px 14px; margin-left:12px; cursor:pointer;
+  }
+  .field input[type="file"]::file-selector-button:hover{background:var(--fig-light);}
+
+  /* ===== Job / candidate cards ===== */
+  .cards-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:18px;}
+  .card{
+    background:var(--white); border:1px solid var(--line); border-radius:16px;
+    padding:22px; position:relative; transition:box-shadow .2s ease;
+  }
+  .card:hover{box-shadow:0 14px 30px rgba(36,18,32,0.08);}
+  .card .top-row{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;}
+  .card h4{font-size:17px; color:var(--ink);}
+  .badge{
+    display:inline-flex; align-items:center; font-size:11.5px; font-weight:700;
+    padding:5px 11px; border-radius:999px; white-space:nowrap;
+  }
+  .badge.scope{background:var(--blush-2); color:var(--fig);}
+  .badge.applied{background:rgba(63,166,107,0.14); color:var(--success);}
+  .card p.desc{font-size:13.5px; color:var(--text-soft); margin-bottom:6px;}
+  .card .meta-row{display:flex; flex-wrap:wrap; gap:8px; margin:14px 0;}
+  .meta-chip{
+    font-size:12px; color:var(--fig); background:var(--blush); padding:5px 10px; border-radius:8px; font-weight:500;
+  }
+  .card .card-actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+  .icon-btn{
+    background:transparent; color:var(--text-soft); font-size:12.5px; text-decoration:underline;
+  }
+  .icon-btn:hover{color:var(--bloom-dark);}
+  .empty-state{
+    text-align:center; padding:50px 20px; color:var(--text-soft);
+    background:var(--white); border:1.5px dashed var(--blush-2); border-radius:16px;
+  }
+  .empty-state .emoji{font-size:32px; display:block; margin-bottom:10px;}
+
+  /* ===== Video recorder ===== */
+  .video-box{
+    display:flex; gap:22px; flex-wrap:wrap; align-items:flex-start;
+  }
+  .video-frame{
+    width:260px; height:200px; border-radius:16px; overflow:hidden; background:var(--ink);
+    position:relative; flex:none;
+  }
+  .video-frame video{width:100%; height:100%; object-fit:cover;}
+  .video-frame .rec-badge{
+    position:absolute; top:10px; left:10px; background:rgba(232,67,91,0.9); color:var(--white);
+    font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .rec-dot{width:8px; height:8px; border-radius:50%; background:var(--white); animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:0.3;}}
+  .video-controls{flex:1; min-width:220px;}
+  .video-controls p.note{font-size:13px; color:var(--text-soft); margin-bottom:14px;}
+  .video-controls .status-line{font-size:13px; font-weight:600; color:var(--fig); margin-bottom:12px;}
+  .video-btn-row{display:flex; gap:10px; flex-wrap:wrap;}
+
+  /* ===== Match celebration overlay ===== */
+  .match-overlay{
+    position:fixed; inset:0; z-index:100;
+    background:linear-gradient(160deg, rgba(92,42,77,0.97) 0%, rgba(36,18,32,0.97) 100%);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    color:var(--white); text-align:center; padding:24px;
+  }
+  .match-overlay .big-heart{font-size:64px; margin-bottom:18px; animation:pop .5s ease;}
+  @keyframes pop{0%{transform:scale(0);} 60%{transform:scale(1.2);} 100%{transform:scale(1);}}
+  .match-overlay h2{font-size:32px; color:var(--white); margin-bottom:10px;}
+  .match-overlay p{color:rgba(255,255,255,0.8); max-width:380px; margin-bottom:30px;}
+  .confetti-heart{
+    position:absolute; font-size:20px; opacity:0.9; animation:fall linear forwards;
+  }
+  @keyframes fall{
+    0%{transform:translateY(-40px) rotate(0deg); opacity:1;}
+    100%{transform:translateY(110vh) rotate(360deg); opacity:0;}
+  }
+
+  /* ===== Modal ===== */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(36,18,32,0.55); z-index:90;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal{
+    background:var(--white); border-radius:18px; max-width:520px; width:100%;
+    max-height:86vh; overflow-y:auto; padding:28px;
+  }
+  .modal .modal-close{
+    float:left; background:var(--blush); color:var(--fig); width:32px; height:32px; border-radius:50%;
+    font-size:16px; font-weight:700;
+  }
+  .modal h3{font-size:20px; margin-bottom:16px;}
+  .modal .detail-row{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:14px;}
+  .modal .detail-row span:first-child{color:var(--text-soft);}
+  .modal .detail-row span:last-child{font-weight:600; color:var(--ink);}
+  .modal video{width:100%; border-radius:12px; margin-top:16px; background:var(--ink);}
+
+  .loading-msg{text-align:center; padding:40px; color:var(--text-soft); font-size:14px;}
+
+  /* ===== Auth / status extras ===== */
+  .auth-msg{font-size:13px; margin-bottom:12px; padding:10px 12px; border-radius:9px;}
+  .auth-msg.error{background:rgba(232,67,91,0.1); color:var(--bloom-dark);}
+  .auth-msg.info{background:rgba(63,166,107,0.12); color:var(--success);}
+  .status-box{
+    margin-top:16px; padding:14px 16px; background:var(--blush); border-radius:12px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  .status-box span{font-size:13.5px; font-weight:600; color:var(--fig);}
+  .badge.inactive{background:rgba(107,85,102,0.14); color:var(--text-soft);}
+  .find-profile-item{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 12px; background:var(--blush); border-radius:10px; margin-bottom:8px; font-size:13.5px;
+  }
+  .app-status-block{
+    background:var(--blush); border-radius:12px; padding:14px; margin-top:10px;
+  }
+  .app-status-block .field{margin-bottom:10px;}
+  .app-status-block select, .app-status-block textarea{
+    width:100%; padding:9px 12px; border-radius:8px; font-size:13.5px;
+    border:1.5px solid var(--line); background:var(--white); color:var(--ink);
+  }
+  .app-status-block textarea{min-height:60px; resize:vertical;}
+  .save-status-note{font-size:12px; color:var(--success); margin-top:6px; display:none;}
+
+  @media (max-width:760px){
+    .landing h1{font-size:32px;}
+    .field-grid{grid-template-columns:1fr;}
+    .cards-grid{grid-template-columns:1fr;}
+    .role-choice{flex-direction:column; align-items:center;}
+    .video-box{flex-direction:column;}
+    .video-frame{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== LANDING ===================== -->
+<section class="landing" id="landingView">
+  <div class="landing-inner">
+    <div class="landing-logo"><span class="heart">❤️</span> Love Job</div>
+
+    <div class="match-stage">
+      <div class="stage-card candidate"><span class="icon">🙋</span> מחפש/ת עבודה</div>
+      <div class="stage-card job"><span class="icon">💼</span> מגייס/ת עובדים</div>
+      <div class="match-heart">✓</div>
+    </div>
+
+    <h1>מוצאים את <em>ההתאמה המושלמת</em><br>בין אנשים למשרות</h1>
+    <p class="lead">Love Job מחברת בין מעסיקים למחפשי עבודה — פרסמו משרה, הגישו מועמדות, והכירו קצת יותר עם ראיון וידאו קצר.</p>
+
+    <div class="role-choice">
+      <div class="role-card">
+        <span class="emoji">💼</span>
+        <h3>אני מעסיק/ה</h3>
+        <p>רוצה לפרסם משרה ולמצוא את המועמדים הכי מתאימים</p>
+        <button class="btn btn-fig btn-block" data-role="employer">כניסה כמעסיק/ה</button>
+      </div>
+      <div class="role-card">
+        <span class="emoji">🙋</span>
+        <h3>אני מחפש/ת עבודה</h3>
+        <p>רוצה להגיש מועמדות למשרות ולהציג את עצמי</p>
+        <button class="btn btn-bloom btn-block" data-role="candidate">כניסה כמועמד/ת</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== APP SHELL ===================== -->
+<div id="appShell" class="hidden">
+  <header class="app-header">
+    <div class="wrap">
+      <div class="app-logo"><span class="heart">❤️</span> Love Job</div>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <span class="role-pill" id="rolePill"></span>
+        <button class="switch-role hidden" id="logoutBtn">התנתקות</button>
+        <button class="switch-role" id="switchRoleBtn">החלפת תפקיד</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== EMPLOYER AUTH VIEW ===================== -->
+  <main class="view hidden" id="employerAuthView">
+    <div class="wrap" style="max-width:420px;">
+      <div class="view-head">
+        <span class="eyebrow">אזור מעסיקים</span>
+        <h2 id="authTitle">התחברות מעסיק/ה</h2>
+        <p>נהלו את המשרות שפרסמתם ואת המועמדים שהגישו אליהן מועמדות, באזור אישי ומאובטח.</p>
+      </div>
+      <div class="panel">
+        <form id="employerAuthForm">
+          <div class="field">
+            <label for="authEmail">אימייל</label>
+            <input id="authEmail" type="email" required placeholder="you@company.co.il">
+          </div>
+          <div class="field">
+            <label for="authPassword">סיסמה</label>
+            <input id="authPassword" type="password" required minlength="6" placeholder="לפחות 6 תווים">
+          </div>
+          <div id="authMsg" class="auth-msg hidden"></div>
+          <button type="submit" class="btn btn-bloom btn-block" id="authSubmitBtn">התחברות</button>
+        </form>
+        <p style="text-align:center; margin-top:16px; font-size:13.5px; color:var(--text-soft);">
+          <span id="authToggleText">עדיין אין לכם חשבון?</span>
+          <button type="button" class="switch-role" id="authToggleBtn" style="padding:0;">הרשמה</button>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================== EMPLOYER VIEW ===================== -->
+  <main class="view hidden" id="employerView">
+    <div class="wrap">
+      <div class="view-head">
+        <span class="eyebrow">אזור מעסיקים</span>
+        <h2>פרסמו משרה ומצאו את המועמד/ת הבא/ה שלכם</h2>
+        <p>המשרה תופיע לכל מחפשי העבודה במערכת, ותוכלו לצפות במועמדים שהגישו מועמדות ובראיון הווידאו שלהם.</p>
+      </div>
+
+      <div class="panel">
+        <h3>פרסום משרה חדשה</h3>
+        <form id="jobForm">
+          <div class="field-grid">
+            <div class="field">
+              <label for="jobEmployerName">שם המעסיק / החברה *</label>
+              <input id="jobEmployerName" required placeholder="לדוגמה: כהן גליק השמה">
+            </div>
+            <div class="field">
+              <label for="jobContactEmail">אימייל לשליחת קורות חיים *</label>
+              <input id="jobContactEmail" type="email" required placeholder="hr@company.co.il">
+            </div>
+            <div class="field full">
+              <label for="jobTitle">כותרת המשרה *</label>
+              <input id="jobTitle" required placeholder="לדוגמה: נציג/ת שירות לקוחות">
+            </div>
+            <div class="field full">
+              <label for="jobDesc">תיאור המשרה *</label>
+              <textarea id="jobDesc" required placeholder="במה יעסוק/תעסוק בעל/ת התפקיד ביום-יום"></textarea>
+            </div>
+            <div class="field full">
+              <label for="jobReq">דרישות התפקיד *</label>
+              <textarea id="jobReq" required placeholder="ניסיון נדרש, כישורים, השכלה וכו׳"></textarea>
+            </div>
+            <div class="field">
+              <label for="jobScope">היקף משרה *</label>
+              <select id="jobScope" required>
+                <option value="">בחרו היקף</option>
+                <option value="משרה מלאה">משרה מלאה</option>
+                <option value="משרה חלקית">משרה חלקית</option>
+                <option value="משמרות">משמרות</option>
+                <option value="גמיש">גמיש</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="jobLocation">מיקום <span class="hint">(לא חובה)</span></label>
+              <input id="jobLocation" placeholder="עיר / אזור">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-bloom">פרסום משרה ❤️</button>
+        </form>
+      </div>
+
+      <div class="view-head" style="margin-bottom:18px;">
+        <h3 style="font-size:19px; font-family:'Rubik'; font-weight:700; color:var(--ink);">המשרות שפרסמתי</h3>
+      </div>
+      <div id="employerJobsList"></div>
+
+      <div class="view-head" style="margin:44px 0 18px;">
+        <h3 style="font-size:19px; font-family:'Rubik'; font-weight:700; color:var(--ink);">מועמדים רשומים במערכת</h3>
+        <p style="margin-top:6px;">כל מחפשי העבודה שיצרו פרופיל ב-Love Job</p>
+      </div>
+      <div class="field" style="max-width:320px;">
+        <label for="candidateFilterInput">סינון לפי סוג משרה</label>
+        <input id="candidateFilterInput" placeholder="לדוגמה: הנהלת חשבונות">
+      </div>
+      <div id="employerCandidatesList"></div>
+    </div>
+  </main>
+
+  <!-- ===================== CANDIDATE VIEW ===================== -->
+  <main class="view hidden" id="candidateView">
+    <div class="wrap">
+      <div class="view-head">
+        <span class="eyebrow">אזור מועמדים</span>
+        <h2>ספרו לנו קצת עליכם</h2>
+        <p>מלאו את הפרופיל שלכם, צלמו ראיון וידאו קצר, והגישו מועמדות למשרות שמעניינות אתכם.</p>
+      </div>
+
+      <div class="panel" style="margin-bottom:20px;">
+        <h3>כבר יצרתם פרופיל בעבר?</h3>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end;">
+          <div class="field" style="flex:1; min-width:200px; margin-bottom:0;">
+            <label for="findProfileInput">חפשו לפי שם מלא</label>
+            <input id="findProfileInput" placeholder="השם שמילאתם בפרופיל">
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="findProfileBtn">חיפוש</button>
+        </div>
+        <div id="findProfileResults" style="margin-top:14px;"></div>
+      </div>
+
+      <div class="panel">
+        <h3>הפרופיל שלי</h3>
+        <form id="candidateForm">
+          <div class="field-grid">
+            <div class="field">
+              <label for="candName">שם מלא *</label>
+              <input id="candName" required placeholder="שם פרטי ומשפחה">
+            </div>
+            <div class="field">
+              <label for="candAddress">כתובת *</label>
+              <input id="candAddress" required placeholder="עיר, רחוב">
+            </div>
+            <div class="field">
+              <label for="candBirth">תאריך לידה *</label>
+              <input id="candBirth" type="date" required>
+            </div>
+            <div class="field">
+              <label for="candJobType">סוג משרה מבוקש *</label>
+              <input id="candJobType" required placeholder="לדוגמה: הנהלת חשבונות">
+            </div>
+            <div class="field">
+              <label for="candScope">היקף משרה רצוי *</label>
+              <select id="candScope" required>
+                <option value="">בחרו היקף</option>
+                <option value="משרה מלאה">משרה מלאה</option>
+                <option value="משרה חלקית">משרה חלקית</option>
+                <option value="משמרות">משמרות</option>
+                <option value="גמיש">גמיש</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="candSalary">ציפיות שכר (₪ ברוטו לחודש) *</label>
+              <input id="candSalary" type="number" min="0" required placeholder="לדוגמה: 8000">
+            </div>
+            <div class="field full">
+              <label for="candAvailability">זמינות להתחלת עבודה *</label>
+              <select id="candAvailability" required>
+                <option value="">בחרו זמינות</option>
+                <option value="מיידית">מיידית</option>
+                <option value="תוך שבועיים">תוך שבועיים</option>
+                <option value="תוך חודש">תוך חודש</option>
+                <option value="גמיש">גמיש</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label for="candResume">קובץ קורות חיים <span class="hint">(PDF או Word, לא חובה)</span></label>
+            <input type="file" id="candResume" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            <div id="resumeFileName" class="hint" style="margin-top:6px; display:block;"></div>
+          </div>
+
+          <div class="field full" style="margin-top:4px;">
+            <label>ראיון וידאו קצר <span class="hint">(עד 25 שניות, לא חובה)</span></label>
+            <div class="video-box">
+              <div class="video-frame">
+                <video id="videoPreview" autoplay muted playsinline></video>
+                <div class="rec-badge hidden" id="recBadge"><span class="rec-dot"></span> מקליט</div>
+              </div>
+              <div class="video-controls">
+                <p class="note">ספרו בקצרה מי אתם ומה אתם מחפשים כרגע בעבודה הבאה שלכם.</p>
+                <div class="status-line" id="videoStatus">אין הקלטה עדיין</div>
+                <div class="video-btn-row">
+                  <button type="button" class="btn btn-outline btn-sm" id="startCamBtn">הפעלת מצלמה</button>
+                  <button type="button" class="btn btn-bloom btn-sm hidden" id="startRecBtn">🔴 התחלת הקלטה</button>
+                  <button type="button" class="btn btn-fig btn-sm hidden" id="stopRecBtn">עצירת הקלטה</button>
+                  <button type="button" class="btn btn-outline btn-sm hidden" id="retakeBtn">הקלטה מחדש</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-bloom" style="margin-top:22px;">שמירת הפרופיל ❤️</button>
+
+          <div id="candidateStatusBox" class="status-box hidden">
+            <span id="candidateStatusText"></span>
+            <button type="button" class="btn btn-outline btn-sm" id="toggleStatusBtn"></button>
+          </div>
+        </form>
+      </div>
+
+      <div class="view-head" style="margin-bottom:18px;">
+        <h3 style="font-size:19px; font-family:'Rubik'; font-weight:700; color:var(--ink);">משרות פתוחות</h3>
+        <p style="margin-top:6px;">שמרו פרופיל תחילה כדי שנוכל לשלוח את המועמדות שלכם</p>
+      </div>
+      <div id="candidateJobsList"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ===================== MODAL (candidate profile view for employer) ===================== -->
+<div class="modal-backdrop hidden" id="modalBackdrop">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- ===================== MATCH CELEBRATION ===================== -->
+<div class="match-overlay hidden" id="matchOverlay">
+  <div class="big-heart">💘</div>
+  <h2>יש התאמה!</h2>
+  <p id="matchOverlayText">המועמדות שלכם נשלחה בהצלחה למעסיק/ה.</p>
+  <button class="btn btn-bloom" id="closeMatchBtn">מעולה, תודה!</button>
+</div>
+
+<!-- ===================== SETUP REQUIRED BANNER ===================== -->
+<div id="setupBanner" class="hidden" style="position:fixed; inset:0; z-index:200; background:var(--ink); color:var(--white); display:flex; align-items:center; justify-content:center; padding:24px; text-align:center;">
+  <div style="max-width:480px;">
+    <div style="font-size:40px; margin-bottom:14px;">🔌</div>
+    <h2 style="color:var(--white); font-size:22px; margin-bottom:12px;">חסר חיבור למסד הנתונים</h2>
+    <p style="color:rgba(255,255,255,0.75); font-size:14px; line-height:1.7;">
+      כדי שהאפליקציה תוכל לשמור משרות ופרופילים, יש להזין את פרטי החיבור ל-Supabase בקובץ (SUPABASE_URL ו-SUPABASE_ANON_KEY בתחילת קטע ה-JavaScript).
+    </p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Supabase connection ---------- */
+  /* 1. Create a free project at https://supabase.com
+     2. Run the setup SQL (tables + storage bucket) from the guide
+     3. Paste your Project URL and anon public key below */
+  const SUPABASE_URL = 'https://rietwlmzhhoxnrebtfxu.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_OSOSA-uakS5WzSA0NShZQA_ltOqdr4k';
+
+  if(SUPABASE_URL.indexOf('YOUR_SUPABASE') === 0 || SUPABASE_ANON_KEY.indexOf('YOUR_SUPABASE') === 0){
+    document.getElementById('setupBanner').classList.remove('hidden');
+    return;
+  }
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  /* ---------- Data helpers (Supabase) ---------- */
+  async function fetchJobs(){
+    const { data, error } = await sb.from('jobs').select('*').order('created_at', { ascending:false });
+    if(error){ console.error('fetchJobs', error); return []; }
+    return data || [];
+  }
+  async function insertJob(job){
+    const { error } = await sb.from('jobs').insert([job]);
+    if(error){ console.error('insertJob', error); return false; }
+    return true;
+  }
+  async function deleteJobRow(jobId){
+    const { error } = await sb.from('jobs').delete().eq('id', jobId);
+    if(error){ console.error('deleteJobRow', error); return false; }
+    return true;
+  }
+
+  async function fetchCandidates(){
+    const { data, error } = await sb.from('candidates').select('*').order('created_at', { ascending:false });
+    if(error){ console.error('fetchCandidates', error); return []; }
+    return data || [];
+  }
+  async function upsertCandidate(candidate){
+    const { error } = await sb.from('candidates').upsert([candidate]);
+    if(error){ console.error('upsertCandidate', error); return false; }
+    return true;
+  }
+  async function deleteCandidateRow(candidateId){
+    const { error } = await sb.from('candidates').delete().eq('id', candidateId);
+    if(error){ console.error('deleteCandidateRow', error); return false; }
+    return true;
+  }
+
+  async function fetchApplications(){
+    // full rows incl. status/notes — only returns rows for jobs the
+    // logged-in employer owns, thanks to RLS. Empty for everyone else.
+    const { data, error } = await sb.from('applications').select('*');
+    if(error){ console.error('fetchApplications', error); return []; }
+    return data || [];
+  }
+  async function fetchPublicApplications(){
+    // minimal, non-sensitive rows (no status, no notes) — safe for
+    // candidates, just enough to know "did I already apply to this job".
+    const { data, error } = await sb.from('public_applications').select('*');
+    if(error){ console.error('fetchPublicApplications', error); return []; }
+    return data || [];
+  }
+  async function insertApplication(app){
+    const { error } = await sb.from('applications').insert([app]);
+    if(error){ console.error('insertApplication', error); return false; }
+    return true;
+  }
+
+  async function uploadVideoFile(candidateId, blob){
+    const path = 'videos/' + candidateId + '-' + Date.now() + '.webm';
+    const { error } = await sb.storage.from('media').upload(path, blob, { contentType:'video/webm', upsert:true });
+    if(error){ console.error('uploadVideoFile', error); return null; }
+    const { data } = sb.storage.from('media').getPublicUrl(path);
+    return data ? data.publicUrl : null;
+  }
+  async function uploadResumeFile(candidateId, file){
+    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const path = 'resumes/' + candidateId + '-' + Date.now() + '-' + safeName;
+    const { error } = await sb.storage.from('media').upload(path, file, { contentType: file.type || 'application/octet-stream', upsert:true });
+    if(error){ console.error('uploadResumeFile', error); return null; }
+    const { data } = sb.storage.from('media').getPublicUrl(path);
+    return data ? data.publicUrl : null;
+  }
+
+  let jobs = [];
+  let candidates = [];
+  let applications = []; // minimal, public-safe: {id, job_id, candidate_id} only
+  let employerApplications = []; // full rows incl. status/notes — employer's own jobs only
+  let currentCandidateId = null; // this browser session's candidate, once profile saved
+
+  function uid(){
+    return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() :
+      'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+        const r = Math.random()*16|0, v = c==='x'?r:(r&0x3|0x8); return v.toString(16);
+      });
+  }
+  function escapeHtml(str){
+    return (str || '').replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  /* ---------- Role switching ---------- */
+  const landingView = document.getElementById('landingView');
+  const appShell = document.getElementById('appShell');
+  const employerAuthView = document.getElementById('employerAuthView');
+  const employerView = document.getElementById('employerView');
+  const candidateView = document.getElementById('candidateView');
+  const rolePill = document.getElementById('rolePill');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  let currentEmployer = null; // { id, email } once logged in
+
+  async function showRole(role){
+    landingView.classList.add('hidden');
+    appShell.classList.remove('hidden');
+    employerAuthView.classList.add('hidden');
+    employerView.classList.add('hidden');
+    candidateView.classList.add('hidden');
+    logoutBtn.classList.add('hidden');
+
+    if(role === 'employer'){
+      if(currentEmployer){
+        employerView.classList.remove('hidden');
+        rolePill.textContent = '💼 ' + currentEmployer.email;
+        logoutBtn.classList.remove('hidden');
+        employerApplications = await fetchApplications();
+        renderEmployerJobs();
+        renderEmployerCandidates();
+      }else{
+        employerAuthView.classList.remove('hidden');
+        rolePill.textContent = '';
+      }
+    }else{
+      candidateView.classList.remove('hidden');
+      rolePill.textContent = '🙋 מועמד/ת';
+      renderCandidateJobs();
+      if(typeof refreshStatusBox === 'function') refreshStatusBox();
+    }
+    window.scrollTo(0,0);
+  }
+
+  document.querySelectorAll('[data-role]').forEach(function(btn){
+    btn.addEventListener('click', function(){ showRole(btn.getAttribute('data-role')); });
+  });
+  document.getElementById('switchRoleBtn').addEventListener('click', function(){
+    appShell.classList.add('hidden');
+    landingView.classList.remove('hidden');
+    stopCamera();
+  });
+
+  /* ---------- Employer authentication ---------- */
+  let authMode = 'login'; // or 'signup'
+  const authForm = document.getElementById('employerAuthForm');
+  const authTitle = document.getElementById('authTitle');
+  const authSubmitBtn = document.getElementById('authSubmitBtn');
+  const authToggleText = document.getElementById('authToggleText');
+  const authToggleBtn = document.getElementById('authToggleBtn');
+  const authMsg = document.getElementById('authMsg');
+
+  function setAuthMsg(text, type){
+    authMsg.textContent = text;
+    authMsg.className = 'auth-msg ' + (type || 'error');
+    authMsg.classList.remove('hidden');
+  }
+
+  authToggleBtn.addEventListener('click', function(){
+    authMode = authMode === 'login' ? 'signup' : 'login';
+    if(authMode === 'signup'){
+      authTitle.textContent = 'הרשמת מעסיק/ה חדש/ה';
+      authSubmitBtn.textContent = 'הרשמה';
+      authToggleText.textContent = 'כבר יש לכם חשבון?';
+      authToggleBtn.textContent = 'התחברות';
+    }else{
+      authTitle.textContent = 'התחברות מעסיק/ה';
+      authSubmitBtn.textContent = 'התחברות';
+      authToggleText.textContent = 'עדיין אין לכם חשבון?';
+      authToggleBtn.textContent = 'הרשמה';
+    }
+    authMsg.classList.add('hidden');
+  });
+
+  authForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    authMsg.classList.add('hidden');
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    authSubmitBtn.disabled = true;
+
+    if(authMode === 'signup'){
+      const { data, error } = await sb.auth.signUp({ email: email, password: password });
+      authSubmitBtn.disabled = false;
+      if(error){
+        setAuthMsg(error.message, 'error');
+        return;
+      }
+      if(data.session){
+        currentEmployer = { id: data.user.id, email: data.user.email };
+        showRole('employer');
+      }else{
+        setAuthMsg('נרשמתם בהצלחה! אם נדרש אישור במייל, בדקו את תיבת הדואר ולאחר מכן התחברו.', 'info');
+        authMode = 'login';
+        authTitle.textContent = 'התחברות מעסיק/ה';
+        authSubmitBtn.textContent = 'התחברות';
+        authToggleText.textContent = 'עדיין אין לכם חשבון?';
+        authToggleBtn.textContent = 'הרשמה';
+      }
+    }else{
+      const { data, error } = await sb.auth.signInWithPassword({ email: email, password: password });
+      authSubmitBtn.disabled = false;
+      if(error){
+        setAuthMsg('אימייל או סיסמה שגויים.', 'error');
+        return;
+      }
+      currentEmployer = { id: data.user.id, email: data.user.email };
+      showRole('employer');
+    }
+  });
+
+  logoutBtn.addEventListener('click', async function(){
+    await sb.auth.signOut();
+    currentEmployer = null;
+    appShell.classList.add('hidden');
+    landingView.classList.remove('hidden');
+  });
+
+  /* ---------- Employer: post job ---------- */
+  document.getElementById('jobForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    if(!currentEmployer){
+      alert('יש להתחבר קודם כמעסיק/ה כדי לפרסם משרה.');
+      return;
+    }
+    const submitBtn = e.target.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    const job = {
+      id: uid(),
+      employer_id: currentEmployer.id,
+      employer_name: document.getElementById('jobEmployerName').value.trim(),
+      contact_email: document.getElementById('jobContactEmail').value.trim(),
+      title: document.getElementById('jobTitle').value.trim(),
+      description: document.getElementById('jobDesc').value.trim(),
+      requirements: document.getElementById('jobReq').value.trim(),
+      scope: document.getElementById('jobScope').value,
+      location: document.getElementById('jobLocation').value.trim()
+    };
+    const ok = await insertJob(job);
+    submitBtn.disabled = false;
+    if(ok){
+      jobs.unshift(job);
+      e.target.reset();
+      renderEmployerJobs();
+    }else{
+      alert('לא הצלחנו לשמור את המשרה, נסו שוב.');
+    }
+  });
+
+  async function deleteJob(jobId){
+    if(!confirm('למחוק את המשרה הזו?')) return;
+    const ok = await deleteJobRow(jobId);
+    if(ok){
+      jobs = jobs.filter(function(j){ return j.id !== jobId; });
+      renderEmployerJobs();
+    }else{
+      alert('לא הצלחנו למחוק את המשרה, נסו שוב.');
+    }
+  }
+
+  function jobApplicantsCount(jobId){
+    return employerApplications.filter(function(a){ return a.job_id === jobId; }).length;
+  }
+
+  function renderEmployerJobs(){
+    const el = document.getElementById('employerJobsList');
+    const myJobs = jobs.filter(function(j){ return currentEmployer && j.employer_id === currentEmployer.id; });
+    if(myJobs.length === 0){
+      el.innerHTML = '<div class="empty-state"><span class="emoji">📭</span>עדיין לא פרסמתם משרות. המשרה הראשונה שלכם תופיע כאן.</div>';
+      return;
+    }
+    el.innerHTML = '<div class="cards-grid">' + myJobs.map(function(job){
+      const count = jobApplicantsCount(job.id);
+      return '<div class="card">' +
+        '<div class="top-row"><h4>' + escapeHtml(job.title) + '</h4><span class="badge scope">' + escapeHtml(job.scope) + '</span></div>' +
+        (job.employer_name ? '<p class="desc" style="font-weight:600; color:var(--fig);">🏢 ' + escapeHtml(job.employer_name) + '</p>' : '') +
+        '<p class="desc">' + escapeHtml(job.description) + '</p>' +
+        '<div class="meta-row">' +
+          (job.location ? '<span class="meta-chip">📍 ' + escapeHtml(job.location) + '</span>' : '') +
+          (job.contact_email ? '<span class="meta-chip">✉️ ' + escapeHtml(job.contact_email) + '</span>' : '') +
+        '</div>' +
+        '<div class="card-actions">' +
+          '<button class="btn btn-outline btn-sm" data-view-applicants="' + job.id + '">🙋 מועמדים למשרה זו (' + count + ')</button>' +
+          '<button class="icon-btn" data-delete-job="' + job.id + '">מחיקת משרה</button>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+
+    el.querySelectorAll('[data-delete-job]').forEach(function(btn){
+      btn.addEventListener('click', function(){ deleteJob(btn.getAttribute('data-delete-job')); });
+    });
+    el.querySelectorAll('[data-view-applicants]').forEach(function(btn){
+      btn.addEventListener('click', function(){ openJobApplicantsModal(btn.getAttribute('data-view-applicants')); });
+    });
+  }
+
+  const STATUS_OPTIONS = ['ממתין', 'זומן לראיון', 'לא מתאים', 'התקבל'];
+
+  function openJobApplicantsModal(jobId){
+    const job = jobs.find(function(j){ return j.id === jobId; });
+    if(!job) return;
+    const jobApplications = employerApplications.filter(function(a){ return a.job_id === jobId; });
+
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalContent = document.getElementById('modalContent');
+
+    let listHtml;
+    if(jobApplications.length === 0){
+      listHtml = '<div class="empty-state" style="margin-top:14px;"><span class="emoji">🙋</span>עדיין אין מועמדים למשרה הזו.</div>';
+    }else{
+      listHtml = '<div style="display:flex; flex-direction:column; gap:14px; margin-top:14px;">' + jobApplications.map(function(app){
+        const c = candidates.find(function(x){ return x.id === app.candidate_id; });
+        if(!c) return '';
+        const optionsHtml = STATUS_OPTIONS.map(function(s){
+          return '<option value="' + escapeHtml(s) + '"' + (app.status === s ? ' selected' : '') + '>' + escapeHtml(s) + '</option>';
+        }).join('');
+        return '<div class="card" style="padding:16px;">' +
+          '<div class="top-row"><h4 style="font-size:15px;">' + escapeHtml(c.full_name) +
+            (c.is_active === false ? ' <span class="badge inactive">לא פעיל/ה</span>' : '') + '</h4>' +
+            '<span style="display:flex; gap:6px;">' +
+              (c.has_video ? '<span class="badge applied">🎥</span>' : '') +
+              (c.has_resume ? '<span class="badge scope">📄</span>' : '') +
+            '</span>' +
+          '</div>' +
+          '<p class="desc">מחפש/ת: ' + escapeHtml(c.job_type) + ' · ₪' + escapeHtml(String(c.salary)) + '</p>' +
+          '<button class="btn btn-outline btn-sm" data-view-candidate-inline="' + c.id + '" style="margin-top:4px;">צפייה בפרופיל המלא</button>' +
+          '<div class="app-status-block">' +
+            '<div class="field"><label>סטטוס מועמדות</label><select data-status-select="' + app.id + '">' + optionsHtml + '</select></div>' +
+            '<div class="field"><label>הערות</label><textarea data-notes-input="' + app.id + '" placeholder="הערות פנימיות...">' + escapeHtml(app.notes || '') + '</textarea></div>' +
+            '<button type="button" class="btn btn-fig btn-sm" data-save-status="' + app.id + '">שמירת סטטוס</button>' +
+            '<div class="save-status-note" data-save-note="' + app.id + '">נשמר ✓</div>' +
+          '</div>' +
+        '</div>';
+      }).join('') + '</div>';
+    }
+
+    modalContent.innerHTML =
+      '<button class="modal-close" id="modalCloseBtn">✕</button>' +
+      '<h3>מועמדים ל"' + escapeHtml(job.title) + '"</h3>' +
+      listHtml;
+    modalBackdrop.classList.remove('hidden');
+    document.getElementById('modalCloseBtn').addEventListener('click', function(){
+      modalBackdrop.classList.add('hidden');
+    });
+    modalContent.querySelectorAll('[data-view-candidate-inline]').forEach(function(btn){
+      btn.addEventListener('click', function(){ openCandidateModal(btn.getAttribute('data-view-candidate-inline')); });
+    });
+    modalContent.querySelectorAll('[data-save-status]').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        const appId = btn.getAttribute('data-save-status');
+        const select = modalContent.querySelector('[data-status-select="' + appId + '"]');
+        const textarea = modalContent.querySelector('[data-notes-input="' + appId + '"]');
+        const note = modalContent.querySelector('[data-save-note="' + appId + '"]');
+        btn.disabled = true;
+        const { error } = await sb.from('applications').update({ status: select.value, notes: textarea.value.trim() }).eq('id', appId);
+        btn.disabled = false;
+        if(!error){
+          const appRecord = employerApplications.find(function(a){ return a.id === appId; });
+          if(appRecord){ appRecord.status = select.value; appRecord.notes = textarea.value.trim(); }
+          note.style.display = 'block';
+          setTimeout(function(){ note.style.display = 'none'; }, 2000);
+        }else{
+          alert('לא הצלחנו לשמור את הסטטוס, נסו שוב.');
+        }
+      });
+    });
+  }
+
+  function renderEmployerCandidates(){
+    const el = document.getElementById('employerCandidatesList');
+    const filterInput = document.getElementById('candidateFilterInput');
+    const filterText = (filterInput && filterInput.value ? filterInput.value.trim().toLowerCase() : '');
+    const filtered = filterText
+      ? candidates.filter(function(c){ return (c.job_type || '').toLowerCase().indexOf(filterText) !== -1; })
+      : candidates;
+
+    if(filtered.length === 0){
+      el.innerHTML = '<div class="empty-state"><span class="emoji">🙋</span>' +
+        (filterText ? 'לא נמצאו מועמדים בסוג משרה זה.' : 'עדיין אין מועמדים רשומים במערכת.') + '</div>';
+      return;
+    }
+    el.innerHTML = '<div class="cards-grid">' + filtered.map(function(c){
+      return '<div class="card">' +
+        '<div class="top-row"><h4>' + escapeHtml(c.full_name) + '</h4>' +
+          '<span style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">' +
+            (c.is_active === false ? '<span class="badge inactive">לא פעיל/ה</span>' : '') +
+            (c.has_video ? '<span class="badge applied">🎥 וידאו</span>' : '') +
+            (c.has_resume ? '<span class="badge scope">📄 קו״ח</span>' : '') +
+          '</span>' +
+        '</div>' +
+        '<p class="desc">מחפש/ת: ' + escapeHtml(c.job_type) + '</p>' +
+        '<div class="meta-row">' +
+          '<span class="meta-chip">' + escapeHtml(c.scope) + '</span>' +
+          '<span class="meta-chip">💰 ₪' + escapeHtml(String(c.salary)) + '</span>' +
+          '<span class="meta-chip">⏱ ' + escapeHtml(c.availability) + '</span>' +
+        '</div>' +
+        '<div class="card-actions">' +
+          '<button class="btn btn-outline btn-sm" data-view-candidate="' + c.id + '">צפייה בפרופיל</button>' +
+          '<button class="icon-btn" data-delete-candidate="' + c.id + '">מחיקת מועמד/ת</button>' +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+
+    el.querySelectorAll('[data-view-candidate]').forEach(function(btn){
+      btn.addEventListener('click', function(){ openCandidateModal(btn.getAttribute('data-view-candidate')); });
+    });
+    el.querySelectorAll('[data-delete-candidate]').forEach(function(btn){
+      btn.addEventListener('click', function(){ deleteCandidate(btn.getAttribute('data-delete-candidate')); });
+    });
+  }
+
+  const candidateFilterInputEl = document.getElementById('candidateFilterInput');
+  if(candidateFilterInputEl){
+    candidateFilterInputEl.addEventListener('input', function(){ renderEmployerCandidates(); });
+  }
+
+  async function deleteCandidate(candidateId){
+    const c = candidates.find(function(x){ return x.id === candidateId; });
+    const name = c ? c.full_name : 'המועמד/ת';
+    if(!confirm('למחוק את ' + name + ' לצמיתות מהמאגר? הפעולה תמחק גם את כל המועמדויות שהוגשו על ידו/ה, ולא ניתן לבטל אותה.')) return;
+    const ok = await deleteCandidateRow(candidateId);
+    if(ok){
+      candidates = candidates.filter(function(x){ return x.id !== candidateId; });
+      employerApplications = employerApplications.filter(function(a){ return a.candidate_id !== candidateId; });
+      renderEmployerCandidates();
+      const modalBackdrop = document.getElementById('modalBackdrop');
+      if(modalBackdrop && !modalBackdrop.classList.contains('hidden')) modalBackdrop.classList.add('hidden');
+    }else{
+      alert('לא הצלחנו למחוק את המועמד/ת, נסו שוב.');
+    }
+  }
+
+  function openCandidateModal(candidateId){
+    const c = candidates.find(function(x){ return x.id === candidateId; });
+    if(!c) return;
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalContent = document.getElementById('modalContent');
+    modalContent.innerHTML =
+      '<button class="modal-close" id="modalCloseBtn">✕</button>' +
+      '<h3>' + escapeHtml(c.full_name) + '</h3>' +
+      '<div class="detail-row"><span>כתובת</span><span>' + escapeHtml(c.address) + '</span></div>' +
+      '<div class="detail-row"><span>תאריך לידה</span><span>' + escapeHtml(c.birth_date) + '</span></div>' +
+      '<div class="detail-row"><span>סוג משרה מבוקש</span><span>' + escapeHtml(c.job_type) + '</span></div>' +
+      '<div class="detail-row"><span>היקף משרה</span><span>' + escapeHtml(c.scope) + '</span></div>' +
+      '<div class="detail-row"><span>ציפיות שכר</span><span>₪' + escapeHtml(String(c.salary)) + '</span></div>' +
+      '<div class="detail-row"><span>זמינות</span><span>' + escapeHtml(c.availability) + '</span></div>' +
+      (c.has_resume ? '<div style="margin-top:16px;"><a class="btn btn-outline btn-sm" href="' + escapeHtml(c.resume_url) + '" target="_blank" rel="noopener" download="' + escapeHtml(c.resume_file_name || 'resume') + '">📄 הורדת קורות חיים</a></div>' : '') +
+      (c.has_video ? '<video controls src="' + escapeHtml(c.video_url) + '"></video>' : '') +
+      '<div style="margin-top:18px; border-top:1px solid var(--line); padding-top:16px;">' +
+        '<button class="icon-btn" data-delete-candidate-modal="' + c.id + '">מחיקת מועמד/ת מהמאגר</button>' +
+      '</div>';
+    modalBackdrop.classList.remove('hidden');
+    document.getElementById('modalCloseBtn').addEventListener('click', function(){
+      modalBackdrop.classList.add('hidden');
+    });
+    const delBtn = modalContent.querySelector('[data-delete-candidate-modal]');
+    if(delBtn) delBtn.addEventListener('click', function(){ deleteCandidate(delBtn.getAttribute('data-delete-candidate-modal')); });
+  }
+  document.getElementById('modalBackdrop').addEventListener('click', function(e){
+    if(e.target === this) this.classList.add('hidden');
+  });
+
+
+  /* ---------- Candidate: video recording ---------- */
+  let mediaStream = null;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let recordedBlob = null;
+  let recTimer = null;
+
+  const videoPreview = document.getElementById('videoPreview');
+  const recBadge = document.getElementById('recBadge');
+  const videoStatus = document.getElementById('videoStatus');
+  const startCamBtn = document.getElementById('startCamBtn');
+  const startRecBtn = document.getElementById('startRecBtn');
+  const stopRecBtn = document.getElementById('stopRecBtn');
+  const retakeBtn = document.getElementById('retakeBtn');
+
+  startCamBtn.addEventListener('click', async function(){
+    try{
+      mediaStream = await navigator.mediaDevices.getUserMedia({ video:{width:480,height:360}, audio:true });
+      videoPreview.srcObject = mediaStream;
+      videoPreview.muted = true;
+      startCamBtn.classList.add('hidden');
+      startRecBtn.classList.remove('hidden');
+      videoStatus.textContent = 'המצלמה פועלת — מוכנים להקליט';
+    }catch(err){
+      videoStatus.textContent = 'לא הצלחנו לגשת למצלמה. ודאו שאישרתם הרשאה בדפדפן.';
+    }
+  });
+
+  startRecBtn.addEventListener('click', function(){
+    if(!mediaStream) return;
+    recordedChunks = [];
+    let mimeType = 'video/webm;codecs=vp8,opus';
+    if(!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+    try{
+      mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mimeType });
+    }catch(err){
+      mediaRecorder = new MediaRecorder(mediaStream);
+    }
+    mediaRecorder.ondataavailable = function(e){ if(e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = function(){
+      recordedBlob = new Blob(recordedChunks, { type:'video/webm' });
+      const url = URL.createObjectURL(recordedBlob);
+      videoPreview.srcObject = null;
+      videoPreview.src = url;
+      videoPreview.muted = false;
+      videoPreview.controls = true;
+      videoPreview.play();
+      recBadge.classList.add('hidden');
+      stopRecBtn.classList.add('hidden');
+      retakeBtn.classList.remove('hidden');
+      videoStatus.textContent = 'הוקלט בהצלחה! אפשר לצפות או להקליט מחדש.';
+      clearInterval(recTimer);
+    };
+    mediaRecorder.start();
+    recBadge.classList.remove('hidden');
+    startRecBtn.classList.add('hidden');
+    stopRecBtn.classList.remove('hidden');
+    videoStatus.textContent = 'מקליט… (עד 25 שניות)';
+
+    let seconds = 0;
+    recTimer = setInterval(function(){
+      seconds++;
+      if(seconds >= 25 && mediaRecorder && mediaRecorder.state === 'recording'){
+        mediaRecorder.stop();
+      }
+    }, 1000);
+  });
+
+  stopRecBtn.addEventListener('click', function(){
+    if(mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+  });
+
+  retakeBtn.addEventListener('click', async function(){
+    recordedBlob = null;
+    videoPreview.controls = false;
+    retakeBtn.classList.add('hidden');
+    try{
+      mediaStream = await navigator.mediaDevices.getUserMedia({ video:{width:480,height:360}, audio:true });
+      videoPreview.srcObject = mediaStream;
+      videoPreview.muted = true;
+      startRecBtn.classList.remove('hidden');
+      videoStatus.textContent = 'המצלמה פועלת — מוכנים להקליט';
+    }catch(err){
+      videoStatus.textContent = 'לא הצלחנו לגשת למצלמה שוב.';
+    }
+  });
+
+  function stopCamera(){
+    if(mediaStream){
+      mediaStream.getTracks().forEach(function(t){ t.stop(); });
+      mediaStream = null;
+    }
+  }
+
+  /* ---------- Candidate: resume file selection ---------- */
+  let selectedResumeFile = null;
+  const candResumeInput = document.getElementById('candResume');
+  const resumeFileNameEl = document.getElementById('resumeFileName');
+  candResumeInput.addEventListener('change', function(){
+    selectedResumeFile = candResumeInput.files && candResumeInput.files[0] ? candResumeInput.files[0] : null;
+    resumeFileNameEl.textContent = selectedResumeFile ? ('נבחר: ' + selectedResumeFile.name) : '';
+  });
+
+  /* ---------- Candidate: save profile ---------- */
+  document.getElementById('candidateForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type=submit]');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'שומר...';
+
+    const candidateId = currentCandidateId || uid();
+    const existingBefore = candidates.find(function(c){ return c.id === candidateId; });
+
+    let hasVideo = existingBefore ? !!existingBefore.has_video : false;
+    let videoUrl = existingBefore ? existingBefore.video_url : null;
+    if(recordedBlob){
+      try{
+        const url = await uploadVideoFile(candidateId, recordedBlob);
+        if(url){ hasVideo = true; videoUrl = url; }
+        else{ videoStatus.textContent = 'לא הצלחנו להעלות את הווידאו, נסו שוב.'; }
+      }catch(err){
+        console.error('video upload failed', err);
+      }
+    }
+
+    let hasResume = existingBefore ? !!existingBefore.has_resume : false;
+    let resumeUrl = existingBefore ? existingBefore.resume_url : null;
+    let resumeFileName = existingBefore ? existingBefore.resume_file_name : '';
+    if(selectedResumeFile){
+      if(selectedResumeFile.size > 20 * 1024 * 1024){
+        resumeFileNameEl.textContent = 'הקובץ גדול מדי (מקסימום 20MB). נסו קובץ קטן יותר.';
+      }else{
+        try{
+          const url = await uploadResumeFile(candidateId, selectedResumeFile);
+          if(url){ hasResume = true; resumeUrl = url; resumeFileName = selectedResumeFile.name; }
+          else{ resumeFileNameEl.textContent = 'לא הצלחנו להעלות את הקובץ, נסו שוב.'; }
+        }catch(err){
+          console.error('resume upload failed', err);
+        }
+      }
+    }
+
+    const candidate = {
+      id: candidateId,
+      full_name: document.getElementById('candName').value.trim(),
+      address: document.getElementById('candAddress').value.trim(),
+      birth_date: document.getElementById('candBirth').value,
+      job_type: document.getElementById('candJobType').value.trim(),
+      scope: document.getElementById('candScope').value,
+      salary: document.getElementById('candSalary').value,
+      availability: document.getElementById('candAvailability').value,
+      has_video: hasVideo,
+      video_url: videoUrl,
+      has_resume: hasResume,
+      resume_url: resumeUrl,
+      resume_file_name: resumeFileName,
+      is_active: existingBefore ? existingBefore.is_active !== false : true
+    };
+
+    const ok = await upsertCandidate(candidate);
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'שמירת הפרופיל ❤️';
+
+    if(ok){
+      const existingIdx = candidates.findIndex(function(c){ return c.id === candidateId; });
+      if(existingIdx >= 0){ candidates[existingIdx] = candidate; } else { candidates.unshift(candidate); }
+      currentCandidateId = candidateId;
+      renderCandidateJobs();
+      refreshStatusBox();
+      alert('הפרופיל נשמר בהצלחה! עכשיו אפשר להגיש מועמדות למשרות למטה.');
+    }else{
+      alert('לא הצלחנו לשמור את הפרופיל, נסו שוב.');
+    }
+  });
+
+  /* ---------- Candidate: active/inactive status toggle ---------- */
+  const candidateStatusBox = document.getElementById('candidateStatusBox');
+  const candidateStatusText = document.getElementById('candidateStatusText');
+  const toggleStatusBtn = document.getElementById('toggleStatusBtn');
+
+  function refreshStatusBox(){
+    if(!currentCandidateId){
+      candidateStatusBox.classList.add('hidden');
+      return;
+    }
+    const c = candidates.find(function(x){ return x.id === currentCandidateId; });
+    const isActive = c ? c.is_active !== false : true;
+    candidateStatusBox.classList.remove('hidden');
+    candidateStatusText.textContent = isActive
+      ? 'הסטטוס שלכם: פעיל/ה (מחפש/ת עבודה)'
+      : 'הסטטוס שלכם: לא פעיל/ה (מצאתם עבודה)';
+    toggleStatusBtn.textContent = isActive ? 'מצאתי עבודה — סימון כלא פעיל/ה' : 'חזרתי לחפש — סימון כפעיל/ה';
+  }
+
+  toggleStatusBtn.addEventListener('click', async function(){
+    if(!currentCandidateId) return;
+    const c = candidates.find(function(x){ return x.id === currentCandidateId; });
+    if(!c) return;
+    const newActive = !(c.is_active !== false);
+    toggleStatusBtn.disabled = true;
+    const { error } = await sb.from('candidates').update({ is_active: newActive }).eq('id', currentCandidateId);
+    toggleStatusBtn.disabled = false;
+    if(!error){
+      c.is_active = newActive;
+      refreshStatusBox();
+    }else{
+      alert('לא הצלחנו לעדכן את הסטטוס, נסו שוב.');
+    }
+  });
+
+  /* ---------- Candidate: find an existing profile ---------- */
+  document.getElementById('findProfileBtn').addEventListener('click', function(){
+    const term = document.getElementById('findProfileInput').value.trim().toLowerCase();
+    const resultsEl = document.getElementById('findProfileResults');
+    if(!term){
+      resultsEl.innerHTML = '<p class="hint">הקלידו שם לחיפוש.</p>';
+      return;
+    }
+    const matches = candidates.filter(function(c){ return (c.full_name || '').toLowerCase().indexOf(term) !== -1; });
+    if(matches.length === 0){
+      resultsEl.innerHTML = '<p class="hint">לא נמצא פרופיל בשם הזה. אפשר למלא פרופיל חדש למטה.</p>';
+      return;
+    }
+    resultsEl.innerHTML = matches.map(function(c){
+      return '<div class="find-profile-item">' +
+        '<span>' + escapeHtml(c.full_name) + ' · ' + escapeHtml(c.job_type) + '</span>' +
+        '<button type="button" class="btn btn-outline btn-sm" data-load-profile="' + c.id + '">טעינת הפרופיל</button>' +
+      '</div>';
+    }).join('');
+    resultsEl.querySelectorAll('[data-load-profile]').forEach(function(btn){
+      btn.addEventListener('click', function(){ loadCandidateIntoForm(btn.getAttribute('data-load-profile')); });
+    });
+  });
+
+  function loadCandidateIntoForm(candidateId){
+    const c = candidates.find(function(x){ return x.id === candidateId; });
+    if(!c) return;
+    document.getElementById('candName').value = c.full_name || '';
+    document.getElementById('candAddress').value = c.address || '';
+    document.getElementById('candBirth').value = c.birth_date || '';
+    document.getElementById('candJobType').value = c.job_type || '';
+    document.getElementById('candScope').value = c.scope || '';
+    document.getElementById('candSalary').value = c.salary || '';
+    document.getElementById('candAvailability').value = c.availability || '';
+    resumeFileNameEl.textContent = c.has_resume ? ('קובץ קיים: ' + (c.resume_file_name || 'קורות חיים') + ' (בחרו קובץ חדש כדי להחליף)') : '';
+    currentCandidateId = c.id;
+    refreshStatusBox();
+    renderCandidateJobs();
+    document.getElementById('findProfileResults').innerHTML = '<p class="hint">הפרופיל נטען למטה — אפשר לערוך ולשמור, או לשנות סטטוס.</p>';
+    document.getElementById('candidateForm').scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+
+  /* ---------- Candidate: browse & apply to jobs ---------- */
+  function hasApplied(jobId){
+    return currentCandidateId && applications.some(function(a){
+      return a.job_id === jobId && a.candidate_id === currentCandidateId;
+    });
+  }
+
+  async function applyToJob(jobId){
+    if(!currentCandidateId){
+      alert('שמרו קודם את הפרופיל שלכם למעלה, ואז תוכלו להגיש מועמדות.');
+      return;
+    }
+    if(hasApplied(jobId)) return;
+    const application = { id: uid(), job_id: jobId, candidate_id: currentCandidateId };
+    const ok = await insertApplication(application);
+    if(ok){
+      applications.unshift(application);
+      renderCandidateJobs();
+      showMatchCelebration();
+    }else{
+      alert('לא הצלחנו לשלוח את המועמדות, נסו שוב.');
+    }
+  }
+
+  function renderCandidateJobs(){
+    const el = document.getElementById('candidateJobsList');
+    if(jobs.length === 0){
+      el.innerHTML = '<div class="empty-state"><span class="emoji">💼</span>עדיין אין משרות פתוחות במערכת. חזרו לבדוק בקרוב!</div>';
+      return;
+    }
+    el.innerHTML = '<div class="cards-grid">' + jobs.map(function(job){
+      const applied = hasApplied(job.id);
+      const actionHtml = applied
+        ? '<span class="badge applied">✓ הוגשה מועמדות</span>'
+        : '<button class="btn btn-bloom btn-sm" data-apply-job="' + job.id + '">הגשת מועמדות ❤️</button>';
+      return '<div class="card">' +
+        '<div class="top-row"><h4>' + escapeHtml(job.title) + '</h4><span class="badge scope">' + escapeHtml(job.scope) + '</span></div>' +
+        (job.employer_name ? '<p class="desc" style="font-weight:600; color:var(--fig);">🏢 ' + escapeHtml(job.employer_name) + '</p>' : '') +
+        '<p class="desc">' + escapeHtml(job.description) + '</p>' +
+        '<div class="meta-row">' +
+          (job.location ? '<span class="meta-chip">📍 ' + escapeHtml(job.location) + '</span>' : '') +
+        '</div>' +
+        '<div class="card-actions">' +
+          actionHtml +
+          (job.contact_email ? '<a class="icon-btn" href="mailto:' + escapeHtml(job.contact_email) + '?subject=' + encodeURIComponent('קורות חיים - ' + job.title) + '">או שליחה ישירה למייל</a>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+
+    el.querySelectorAll('[data-apply-job]').forEach(function(btn){
+      btn.addEventListener('click', function(){ applyToJob(btn.getAttribute('data-apply-job')); });
+    });
+  }
+
+  /* ---------- Match celebration ---------- */
+  function showMatchCelebration(){
+    const overlay = document.getElementById('matchOverlay');
+    overlay.classList.remove('hidden');
+    for(let i=0;i<18;i++){
+      const heart = document.createElement('div');
+      heart.className = 'confetti-heart';
+      heart.textContent = ['❤️','💛','💜','💗'][Math.floor(Math.random()*4)];
+      heart.style.left = Math.random()*100 + '%';
+      heart.style.animationDuration = (2 + Math.random()*2) + 's';
+      heart.style.animationDelay = (Math.random()*0.6) + 's';
+      overlay.appendChild(heart);
+      setTimeout(function(h){ return function(){ h.remove(); }; }(heart), 4500);
+    }
+  }
+  document.getElementById('closeMatchBtn').addEventListener('click', function(){
+    document.getElementById('matchOverlay').classList.add('hidden');
+  });
+
+  /* ---------- Init ---------- */
+  (async function init(){
+    const [j, c, a, sessionRes] = await Promise.all([
+      fetchJobs(),
+      fetchCandidates(),
+      fetchPublicApplications(),
+      sb.auth.getSession()
+    ]);
+    jobs = j; candidates = c; applications = a;
+    if(sessionRes && sessionRes.data && sessionRes.data.session){
+      currentEmployer = { id: sessionRes.data.session.user.id, email: sessionRes.data.session.user.email };
+      employerApplications = await fetchApplications();
+    }
+
+    // re-render whichever view the person already landed on
+    if(!employerView.classList.contains('hidden')){
+      renderEmployerJobs();
+      renderEmployerCandidates();
+    }else if(!candidateView.classList.contains('hidden')){
+      renderCandidateJobs();
+    }
+  })();
+
+})();
+</script>
+</body>
+</html>
