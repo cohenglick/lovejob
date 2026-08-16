@@ -875,6 +875,7 @@
         '<div class="top-row"><h4>' + escapeHtml(job.title) + '</h4><span class="badge scope">' + escapeHtml(job.scope) + '</span></div>' +
         (job.employer_name ? '<p class="desc" style="font-weight:600; color:var(--fig);">🏢 ' + escapeHtml(job.employer_name) + '</p>' : '') +
         '<p class="desc">' + escapeHtml(job.description) + '</p>' +
+        (job.requirements ? '<p class="desc"><strong>דרישות:</strong> ' + escapeHtml(job.requirements) + '</p>' : '') +
         '<div class="meta-row">' +
           (job.location ? '<span class="meta-chip">📍 ' + escapeHtml(job.location) + '</span>' : '') +
           (job.contact_email ? '<span class="meta-chip">✉️ ' + escapeHtml(job.contact_email) + '</span>' : '') +
@@ -1352,6 +1353,7 @@
         '<div class="top-row"><h4>' + escapeHtml(job.title) + '</h4><span class="badge scope">' + escapeHtml(job.scope) + '</span></div>' +
         (job.employer_name ? '<p class="desc" style="font-weight:600; color:var(--fig);">🏢 ' + escapeHtml(job.employer_name) + '</p>' : '') +
         '<p class="desc">' + escapeHtml(job.description) + '</p>' +
+        (job.requirements ? '<p class="desc"><strong>דרישות:</strong> ' + escapeHtml(job.requirements) + '</p>' : '') +
         '<div class="meta-row">' +
           (job.location ? '<span class="meta-chip">📍 ' + escapeHtml(job.location) + '</span>' : '') +
         '</div>' +
